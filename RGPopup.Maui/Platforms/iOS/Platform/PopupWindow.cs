@@ -25,7 +25,7 @@ namespace RGPopup.Maui.IOS.Platform
 
         }
 
-        public override UIView HitTest(CGPoint point, UIEvent? uievent)
+       public override UIView HitTest(CGPoint point, UIEvent? uievent)
         {
             var platformRenderer = (PopupPageRenderer?)RootViewController;
             var pageHandler = platformRenderer?.Handler;
@@ -38,7 +38,21 @@ namespace RGPopup.Maui.IOS.Platform
             if (formsElement.InputTransparent)
                 return null!;
 
-            var nativeView = pageHandler?.PlatformView;
+
+           UIView? nativeView = null;
+            try
+            {
+                nativeView = pageHandler?.PlatformView;
+            }
+            catch (InvalidOperationException)
+            {
+                return hitTestResult;
+            }
+
+            if (nativeView == null)
+                return hitTestResult;
+
+
             var scrollView = formsElement.WrappedContent?.Handler?.PlatformView as UIView;
             var contentView = formsElement.CoreContent?.Handler?.PlatformView as UIView;
             var safePadding = formsElement.SafePadding;
